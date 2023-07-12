@@ -1,2 +1,2 @@
-# ai-trading-bot
-AI-powered stock trading bot
+# chat-with-past
+Chat with past personal journals

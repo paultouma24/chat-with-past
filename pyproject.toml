@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "chat-with-past"
+version = "0.1.0"
+description = "Chat with past journals"
+authors = ["Paul Touma <paultouma.touma@gmail.com>"]
+readme = "README.md"
+packages = [{include = "chat_with_past"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+python-dotenv = "^1.0.0"
+openai = {version = "^0.27.8", extras = ["datalib"]}
+chromadb = "^0.3.27"
+python-docx = "^0.8.11"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.24.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
