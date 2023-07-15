@@ -12,6 +12,8 @@ python-dotenv = "^1.0.0"
 openai = {version = "^0.27.8", extras = ["datalib"]}
 chromadb = "^0.3.27"
 python-docx = "^0.8.11"
+ipykernel = "^6.24.0"
+ipdb = "^0.13.13"
 
 
 [tool.poetry.group.dev.dependencies]
