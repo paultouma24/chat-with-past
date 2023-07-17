@@ -6,26 +6,13 @@ import chromadb
 import docx
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
+from helper import debug
 
 LOCAL_CHROMADB_DIR = "../local_chroma_db"
 PRIVATE_JOURNALS_DIR = "../private-journals"
 JOURNAL_DELIMETER = "A New Journal Entry: "
 
 
-def debug(func):
-    def wrapper(*args, **kwargs):
-        # print the fucntion name and arguments
-        print(f"Calling {func.__name__} with args: {args} kwargs: {kwargs}")
-        # call the function
-        result = func(*args, **kwargs)
-        # print the results
-        print(f"{func.__name__} returned: {result}")
-        return result
-
-    return wrapper
-
-
-@debug
 def get_client() -> chromadb.Client:
     client = chromadb.Client(
         Settings(chroma_db_impl="duckdb+parquet", persist_directory=LOCAL_CHROMADB_DIR)
@@ -33,7 +20,6 @@ def get_client() -> chromadb.Client:
     return client
 
 
-@debug
 def get_collection(client):
     journal_collection = client.get_or_create_collection("journal_entries")
 
@@ -56,7 +42,6 @@ def read_docx(file_path: str) -> str:
     return "\n".join(text)
 
 
-@debug
 def get_info_from_fs(directory: str) -> Tuple[List[str], List[str], List[dict]]:
     documents = []
     metadatas = []
@@ -83,13 +68,11 @@ def get_info_from_fs(directory: str) -> Tuple[List[str], List[str], List[dict]]:
     return ids, documents, metadatas
 
 
-@debug
 def first_time_batch_load(collection):
     ids, documents, metadatas = get_info_from_fs(PRIVATE_JOURNALS_DIR)
     collection.add(ids=ids, documents=documents, metadatas=metadatas)
 
 
-@debug
 def n_nearest_neighbors(collection, prompt: str, n_results: int = 3) -> List[str]:
     basic_ef = embedding_functions.DefaultEmbeddingFunction()
 

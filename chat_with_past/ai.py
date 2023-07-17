@@ -5,11 +5,10 @@ from db_util import JOURNAL_DELIMETER
 from dotenv import load_dotenv
 
 
-# TODO: move to main method?
 def load_ai():
     load_dotenv()
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    models = openai.Model.list()
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 
 def return_response(prompt, closest_docs):
@@ -18,12 +17,13 @@ def return_response(prompt, closest_docs):
         messages=[
             {
                 "role": "system",
-                "content": f"""You are a kind and you are the the past self talking to the present self,
-                  based on journal entries provided and separated by {JOURNAL_DELIMETER}) 
+                "content": f"""You are a kind and you are simply responding based on that are provided by the assistant,
+                  Respond based based on journal entries provided in the next message that are separated by {JOURNAL_DELIMETER}) 
                   Be prophetic and cite examples in your responses from the journals.""",
             },
             {"role": "assistant", "content": closest_docs},
             {"role": "user", "content": prompt},
         ],
     )
-    return response
+
+    return response["choices"][0]["message"]["content"]
