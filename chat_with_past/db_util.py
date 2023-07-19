@@ -1,5 +1,5 @@
 import os
-import time
+import subprocess
 from pathlib import Path
 from typing import List, Tuple
 
@@ -7,8 +7,9 @@ import chromadb
 import docx
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
-from helper import debug
 from llama_index import SimpleDirectoryReader
+
+from helper import debug
 
 LOCAL_CHROMADB_DIR = "../local_chroma_db"
 PRIVATE_JOURNALS_DIR = "../private-journals"
@@ -63,6 +64,33 @@ def get_docs_from_fs(root: str) -> Tuple[List[str], List[str]]:
         ids.extend([documents.id_ for documents in documents_ll])
 
     return ids, documents
+
+
+def get_current_path():
+    return PRIVATE_JOURNALS_DIR
+
+
+def load_new_folder_path():
+    path = os.path.abspath("lib")
+    p = subprocess.Popen(
+        ["python3", "tkDirSelector.py"],
+        cwd=path,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    result, error = p.communicate()
+    p.terminate()
+    ret_value = ""
+    if isinstance(result, bytes):
+        ret_value = result.decode("utf-8").strip()
+    if isinstance(result, str):
+        ret_value = result.strip()
+
+    # check if ret_value is a valid path
+    if os.path.isdir(ret_value):
+        return ret_value
+    return
 
 
 def first_time_batch_load(collection):

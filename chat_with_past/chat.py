@@ -1,5 +1,5 @@
 from ai import load_ai, return_response
-from db_util import debug, get_client, get_collection, n_nearest_neighbors
+from db_util import get_client, get_collection, n_nearest_neighbors
 
 
 class ChatBot:

@@ -17,8 +17,7 @@ def return_response(prompt, closest_docs):
         messages=[
             {
                 "role": "system",
-                "content": f"""You are a kind and you are simply responding based on that are provided by the assistant,
-                  Respond based based on journal entries provided in the next message that are separated by {JOURNAL_DELIMETER}) 
+                "content": f"""Respond based on journal entries provided in the next message that are separated by {JOURNAL_DELIMETER}) 
                   Be prophetic and cite examples in your responses from the journals.""",
             },
             {"role": "assistant", "content": closest_docs},
