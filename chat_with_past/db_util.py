@@ -1,5 +1,6 @@
-import datetime
 import os
+import time
+from pathlib import Path
 from typing import List, Tuple
 
 import chromadb
@@ -7,6 +8,7 @@ import docx
 from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 from helper import debug
+from llama_index import SimpleDirectoryReader
 
 LOCAL_CHROMADB_DIR = "../local_chroma_db"
 PRIVATE_JOURNALS_DIR = "../private-journals"
@@ -42,35 +44,31 @@ def read_docx(file_path: str) -> str:
     return "\n".join(text)
 
 
-def get_info_from_fs(directory: str) -> Tuple[List[str], List[str], List[dict]]:
+@debug
+def get_docs_from_fs(root: str) -> Tuple[List[str], List[str]]:
     documents = []
-    metadatas = []
     ids = []
-    count = 1
-    for root, _, files in os.walk(directory):
-        for file in files:
-            file_path = os.path.join(root, file)
 
-            if file.startswith("."):
-                continue
+    subdirs = [
+        os.path.join(root, dI)
+        for dI in os.listdir(root)
+        if os.path.isdir(os.path.join(root, dI))
+    ]
 
-            # gather info from journals
-            last_modified_date = str(
-                datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
-            )
-            title = remove_extension(file)
-            text = read_docx(file_path)
-            documents.append(f"{title} {text}")
-            metadatas.append({"last_modified_date": last_modified_date})
-            ids.append(f"Id{count}")
-            count += 1
+    for dir in subdirs:
+        loader = SimpleDirectoryReader(Path(dir))
+        documents_ll = loader.load_data()
 
-    return ids, documents, metadatas
+        documents.extend([documents.text for documents in documents_ll])
+        ids.extend([documents.id_ for documents in documents_ll])
+
+    return ids, documents
 
 
 def first_time_batch_load(collection):
-    ids, documents, metadatas = get_info_from_fs(PRIVATE_JOURNALS_DIR)
-    collection.add(ids=ids, documents=documents, metadatas=metadatas)
+    ids, documents = get_docs_from_fs(PRIVATE_JOURNALS_DIR)
+    if ids and documents:
+        collection.add(ids=ids, documents=documents)
 
 
 def n_nearest_neighbors(collection, prompt: str, n_results: int = 3) -> List[str]:
