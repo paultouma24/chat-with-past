@@ -1,8 +1,7 @@
 # import libraries
-
 import streamlit as st
 from chat import ChatBot
-from db_util import get_current_path, load_new_folder_path
+from db import get_journal_path_in_db, load_new_folder_path, set_journal_path_in_db
 
 cb = ChatBot()
 
@@ -10,12 +9,15 @@ st.set_page_config("Journal Chat", page_icon="../favicon.png")
 st.title("Chat with Your Past Journals")
 
 
-current_journal_source = st.text(f"Current Journal Source: {get_current_path()}")
+current_journal_source = st.text(
+    f"Current Journal Source: {get_journal_path_in_db(cb.client)}"
+)
 
 if st.button("Change Journal Source"):
     path = load_new_folder_path()
     if path:
-        set_path_in_db()
+        set_journal_path_in_db(cb.client, path)
+        st.experimental_rerun()
 
 
 prompt = st.text_input(

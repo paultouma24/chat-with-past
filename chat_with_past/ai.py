@@ -1,7 +1,7 @@
 import os
 
 import openai
-from db_util import JOURNAL_DELIMETER
+from db import JOURNAL_DELIMETER
 from dotenv import load_dotenv
 
 
