@@ -14,5 +14,5 @@ class ChatBot:
         response = return_response(prompt, closest_docs)
         return response
 
-    # def reload_source_from_current_journal_path(self, path):
-    #     client.delete_collection("journal_entries")
+    def reload_source_from_current_journal_path(self, path):
+        client.delete_collection("journal_entries")
