@@ -8,6 +8,7 @@ from util import debug, get_docs_from_fs
 LOCAL_CHROMADB_DIR = "../local_chroma_db"
 PRIVATE_JOURNALS_DIR = "../private-journals"
 JOURNAL_DELIMETER = "| Journal Entry Separator |"
+JOURNAL_ENTRIES_COLLECTION_NAME = "journal_entries"
 
 
 def get_client() -> chromadb.Client:
@@ -18,10 +19,12 @@ def get_client() -> chromadb.Client:
 
 
 def get_journals_collection(client):
-    journal_collection = client.get_or_create_collection("journal_entries")
+    journal_collection = client.get_or_create_collection(
+        JOURNAL_ENTRIES_COLLECTION_NAME
+    )
 
     if journal_collection.count() == 0:
-        first_time_journal_load(journal_collection)
+        first_time_journal_load(client, journal_collection)
 
     return journal_collection
 
@@ -44,8 +47,9 @@ def get_journal_path_in_db(client):
         return x["documents"][0]
 
 
-def first_time_journal_load(collection):
-    ids, documents = get_docs_from_fs(get_journal_path_in_db())
+def first_time_journal_load(client, collection):
+    collection.delete()
+    ids, documents = get_docs_from_fs(get_journal_path_in_db(client))
     if ids and documents:
         collection.add(ids=ids, documents=documents)
 

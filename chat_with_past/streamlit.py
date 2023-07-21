@@ -1,7 +1,8 @@
 # import libraries
 import streamlit as st
 from chat import ChatBot
-from db import get_journal_path_in_db, load_new_folder_path, set_journal_path_in_db
+from db import first_time_journal_load, get_journal_path_in_db, set_journal_path_in_db
+from util import load_new_folder_path
 
 cb = ChatBot()
 
@@ -17,6 +18,7 @@ if st.button("Change Journal Source"):
     path = load_new_folder_path()
     if path:
         set_journal_path_in_db(cb.client, path)
+        first_time_journal_load(cb.client, cb.collection)
         st.experimental_rerun()
 
 

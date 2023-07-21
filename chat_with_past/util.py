@@ -1,5 +1,6 @@
 import os
 import subprocess
+from pathlib import Path
 from typing import List, Tuple
 
 from llama_index import SimpleDirectoryReader
@@ -26,7 +27,7 @@ def get_docs_from_fs(root: str) -> Tuple[List[str], List[str]]:
     subdirs = [
         os.path.join(root, dI)
         for dI in os.listdir(root)
-        if os.path.isdir(os.path.join(root, dI))
+        if os.path.isdir(os.path.join(root, dI)) and not dI.startswith(".")
     ]
 
     for dir in subdirs:
